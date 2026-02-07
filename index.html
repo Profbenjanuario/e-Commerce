@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>NeuroLearn | E-books de Saúde</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* VARIÁVEIS DE DESIGN FUTURISTA */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-dark: rgba(15, 23, 42, 0.7);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 50px rgba(99, 102, 241, 0.3);
+            --radius: 20px;
+            --radius-small: 12px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 80px; /* Para a navbar inferior */
+        }
+
+        /* GRID SISTEMA RESPONSIVO */
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* NAVBAR SUPERIOR */
+        .navbar {
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 20px;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        /* MENU HAMBÚRGUER FUTURISTA */
+        .menu-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            transform: rotate(90deg);
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .menu-toggle span {
+            width: 22px;
+            height: 2px;
+            background: var(--light);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        /* MENU LATERAL */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100%;
+            background: var(--glass-dark);
+            backdrop-filter: blur(30px);
+            border-left: 1px solid var(--border-glow);
+            padding: 100px 30px 30px;
+            z-index: 999;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            right: 0;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 998;
+            display: none;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        .menu-header {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            margin: 10px 0;
+            background: var(--glass);
+            border-radius: var(--radius-small);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--border-glow);
+            transform: translateX(5px);
+        }
+
+        .menu-item i {
+            width: 24px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        /* SEÇÃO HERO */
+        .hero {
+            padding: 120px 20px 60px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: #94a3b8;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* BOTÕES DE CURSO */
+        .course-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px auto;
+            max-width: 900px;
+        }
+
+        .course-btn {
+            padding: 30px;
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent);
+            transition: 0.6s;
+        }
+
+        .course-btn:hover::before {
+            left: 100%;
+        }
+
+        .course-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .course-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .course-btn h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* SEÇÃO RECENTES */
+        .section-title {
+            font-size: 2rem;
+            margin: 40px 0 30px;
+            padding-left: 20px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .recent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 0 20px;
+        }
+
+        /* CARD DE PRODUTO FUTURISTA */
+        .product-card {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 25px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--secondary);
+            color: var(--dark);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #334155, #475569);
+            border-radius: var(--radius-small);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary);
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        .new-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--secondary);
+        }
+
+        /* BARRA INFERIOR DE NAVEGAÇÃO */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-glow);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 10px;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: var(--radius-small);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* BUSCA FLUTUANTE */
+        .search-float {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .search-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
+        }
+
+        /* MODAL DE BUSCA */
+        .search-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .search-modal.active {
+            display: flex;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 25px;
+            font-size: 1.2rem;
+            background: var(--glass);
+            border: 2px solid var(--border-glow);
+            border-radius: var(--radius);
+            color: white;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .search-results {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* ANIMAÇÕES */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+        }
+
+        .glowing {
+            animation: glow 2s infinite;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 768px) {
+            .course-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .recent-grid {
+                grid-template-columns: 1fr;
+                padding: 0 10px;
+            }
+            
+            .hero {
+                padding: 100px 15px 40px;
+            }
+            
+            .product-card {
+                padding: 20px;
+            }
+            
+            .nav-label {
+                display: none;
+            }
+            
+            .nav-item {
+                padding: 10px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .recent-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BARRA SUPERIOR -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>NeuroLearn</span>
+                </div>
+                
+                <div class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MENU LATERAL -->
+    <div class="side-menu" id="sideMenu">
+        <h3 class="menu-header">
+            <i class="fas fa-compass"></i> Navegação
+        </h3>
+        
+        <div class="menu-item" onclick="window.location.href='catalogo.html?curso=enfermagem'">
+            <i class="fas fa-user-nurse"></i>
+            <span>Enfermagem Geral</span>
+        </div>
+        
+        <div class="menu-item" onclick="window.location.href='catalogo.html?curso=esmi'">
+            <i class="fas fa-baby"></i>
+            <span>ESMI</span>
+        </div>
+        
+        <div class="menu-item" onclick="window.location.href='catalogo.html'">
+            <i class="fas fa-books"></i>
+            <span>Todos os Manuais</span>
+        </div>
+        
+        <div class="menu-item" onclick="window.location.href='conta.html'">
+            <i class="fas fa-user-circle"></i>
+            <span>Minha Conta</span>
+        </div>
+        
+        <div class="menu-item" onclick="window.location.href='admin.html'">
+            <i class="fas fa-cog"></i>
+            <span>Painel Admin</span>
+        </div>
+        
+        <div class="menu-item">
+            <i class="fas fa-question-circle"></i>
+            <span>Sobre Nós</span>
+        </div>
+        
+        <div class="menu-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Privacidade</span>
+        </div>
+    </div>
+    
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- SEÇÃO HERO -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="floating">Conhecimento que Transforma Vidas</h1>
+            <p class="hero-subtitle">
+                Acesso ilimitado aos melhores e-books de Enfermagem e ESMI. 
+                Aprenda com especialistas e leve sua carreira para o próximo nível.
+            </p>
+            
+            <!-- BOTÕES DOS CURSOS -->
+            <div class="course-buttons">
+                <div class="course-btn glowing" onclick="window.location.href='catalogo.html?curso=enfermagem'">
+                    <div class="course-icon">
+                        <i class="fas fa-user-nurse"></i>
+                    </div>
+                    <h3>Enfermagem Geral</h3>
+                    <p>4 semestres • 14 módulos</p>
+                    <small>Do básico ao avançado</small>
+                </div>
+                
+                <div class="course-btn glowing" onclick="window.location.href='catalogo.html?curso=esmi'">
+                    <div class="course-icon">
+                        <i class="fas fa-baby"></i>
+                    </div>
+                    <h3>Enfermagem ESMI</h3>
+                    <p>4 semestres • 12 módulos</p>
+                    <small>Especialização materno-infantil</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MANUAIS RECENTES -->
+    <section class="container">
+        <h2 class="section-title">
+            <i class="fas fa-bolt"></i> Manuais Recentes
+        </h2>
+        
+        <div class="recent-grid" id="recentProducts">
+            <!-- Produtos serão carregados via JS -->
+        </div>
+    </section>
+
+    <!-- BARRA INFERIOR -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span class="nav-label">Home</span>
+        </a>
+        
+        <a href="catalogo.html" class="nav-item">
+            <i class="fas fa-book-medical"></i>
+            <span class="nav-label">Catálogo</span>
+        </a>
+        
+        <a href="carrinho.html" class="nav-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="nav-label">Carrinho</span>
+            <span class="badge" id="cartCount">0</span>
+        </a>
+        
+        <a href="conta.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span class="nav-label">Conta</span>
+        </a>
+        
+        <a href="#" class="nav-item" id="searchBtnMobile">
+            <i class="fas fa-search"></i>
+            <span class="nav-label">Buscar</span>
+        </a>
+    </div>
+
+    <!-- BOTÃO DE BUSCA FLUTUANTE -->
+    <div class="search-float">
+        <button class="search-btn" id="searchBtn">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+
+    <!-- MODAL DE BUSCA -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-container">
+            <input type="text" 
+                   class="search-input" 
+                   placeholder="Pesquise por módulo, ano, semestre..."
+                   id="searchInput">
+            
+            <div class="search-results" id="searchResults">
+                <!-- Resultados aparecem aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // INICIALIZAR BANCO DE DADOS LOCAL
+        function initializeDatabase() {
+            if (!localStorage.getItem('ebooks_initialized')) {
+                // DADOS PRÉ-CADASTRADOS - ENFERMAGEM GERAL
+                const enfermagemProdutos = [
+                    {
+                        id: 'enf1',
+                        titulo: 'Integração e Orientações Gerais',
+                        curso: 'enfermagem',
+                        ano: 1,
+                        semestre: 1,
+                        descricao: 'Introdução à profissão de enfermagem, ética profissional e normas institucionais.',
+                        preco: 200,
+                        preco_desconto: 150,
+                        capa: '📚',
+                        downloads: 1245,
+                        avaliacao: 4.5,
+                        tags: ['introdução', 'ética', 'orientação'],
+                        publicado: true,
+                        data: '2024-01-15'
+                    },
+                    {
+                        id: 'enf2',
+                        titulo: 'Ciências Biológicas I',
+                        curso: 'enfermagem',
+                        ano: 1,
+                        semestre: 1,
+                        descricao: 'Anatomia e fisiologia humana básica para enfermeiros.',
+                        preco: 250,
+                        preco_desconto: 190,
+                        capa: '🧬',
+                        downloads: 1890,
+                        avaliacao: 4.7,
+                        tags: ['anatomia', 'biologia', 'fisiologia'],
+                        publicado: true,
+                        data: '2024-01-20'
+                    },
+                    {
+                        id: 'enf3',
+                        titulo: 'Bases Científicas para Prática de Enfermagem I',
+                        curso: 'enfermagem',
+                        ano: 1,
+                        semestre: 1,
+                        descricao: 'Fundamentos científicos da prática clínica de enfermagem.',
+                        preco: 300,
+                        preco_desconto: 220,
+                        capa: '🔬',
+                        downloads: 2100,
+                        avaliacao: 4.8,
+                        tags: ['prática', 'clínica', 'fundamentos'],
+                        publicado: true,
+                        data: '2024-02-01'
+                    },
+                    {
+                        id: 'enf4',
+                        titulo: 'Prática de Enfermagem/Promoção de Saúde e HIV',
+                        curso: 'enfermagem',
+                        ano: 1,
+                        semestre: 2,
+                        descricao: 'Prevenção, cuidados e promoção da saúde relacionada ao HIV.',
+                        preco: 280,
+                        preco_desconto: 200,
+                        capa: '🩺',
+                        downloads: 1780,
+                        avaliacao: 4.6,
+                        tags: ['hiv', 'prevenção', 'cuidados'],
+                        publicado: true,
+                        data: '2024-02-10'
+                    }
+                ];
+
+                // DADOS PRÉ-CADASTRADOS - ESMI
+                const esmiProdutos = [
+                    {
+                        id: 'esmi1',
+                        titulo: 'Saúde da Mulher em Idade Reprodutiva',
+                        curso: 'esmi',
+                        ano: 1,
+                        semestre: 2,
+                        descricao: 'Cuidados específicos para mulheres em idade reprodutiva.',
+                        preco: 270,
+                        preco_desconto: 210,
+                        capa: '👩',
+                        downloads: 1560,
+                        avaliacao: 4.7,
+                        tags: ['mulher', 'reprodutiva', 'saúde'],
+                        publicado: true,
+                        data: '2024-01-25'
+                    },
+                    {
+                        id: 'esmi2',
+                        titulo: 'Prática de Obstetrícia e Neonatologia',
+                        curso: 'esmi',
+                        ano: 1,
+                        semestre: 2,
+                        descricao: 'Cuidados obstétricos e neonatais especializados.',
+                        preco: 320,
+                        preco_desconto: 250,
+                        capa: '👶',
+                        downloads: 1950,
+                        avaliacao: 4.9,
+                        tags: ['obstetrícia', 'neonatologia', 'parto'],
+                        publicado: true,
+                        data: '2024-02-05'
+                    },
+                    {
+                        id: 'esmi3',
+                        titulo: 'Atenção à Criança e SSRA',
+                        curso: 'esmi',
+                        ano: 2,
+                        semestre: 3,
+                        descricao: 'Cuidados pediátricos e saúde sexual reprodutiva do adolescente.',
+                        preco: 290,
+                        preco_desconto: 230,
+                        capa: '🧒',
+                        downloads: 1420,
+                        avaliacao: 4.6,
+                        tags: ['criança', 'adolescente', 'pediatria'],
+                        publicado: true,
+                        data: '2024-02-15'
+                    }
+                ];
+
+                const todosProdutos = [...enfermagemProdutos, ...esmiProdutos];
+                
+                // SALVAR NO LOCALSTORAGE
+                localStorage.setItem('produtos', JSON.stringify(todosProdutos));
+                localStorage.setItem('carrinho', JSON.stringify([]));
+                localStorage.setItem('usuarios', JSON.stringify([]));
+                localStorage.setItem('vendas', JSON.stringify([]));
+                localStorage.setItem('ebooks_initialized', 'true');
+            }
+        }
+
+        // CARREGAR PRODUTOS RECENTES
+        function loadRecentProducts() {
+            const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+            const recentGrid = document.getElementById('recentProducts');
+            
+            // Ordenar por data (mais recentes primeiro)
+            const recentes = produtos
+                .filter(p => p.publicado)
+                .sort((a, b) => new Date(b.data) - new Date(a.data))
+                .slice(0, 6);
+            
+            recentGrid.innerHTML = recentes.map(produto => `
+                <div class="product-card" onclick="viewProduct('${produto.id}')">
+                    ${produto.preco_desconto ? '<span class="product-badge">PROMO</span>' : ''}
+                    <div class="product-image">
+                        ${produto.capa || '📘'}
+                    </div>
+                    <h3 class="product-title">${produto.titulo}</h3>
+                    <div class="product-meta">
+                        <span>${produto.curso === 'enfermagem' ? 'Enfermagem' : 'ESMI'}</span>
+                        <span>${produto.ano}º Ano • Sem ${produto.semestre}</span>
+                    </div>
+                    <div class="price-container">
+                        ${produto.preco_desconto ? `
+                            <span class="old-price">${produto.preco} MT</span>
+                            <span class="new-price">${produto.preco_descionto} MT</span>
+                        ` : `
+                            <span class="new-price">${produto.preco} MT</span>
+                        `}
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="btn-secondary" onclick="event.stopPropagation(); addToCart('${produto.id}')">
+                            <i class="fas fa-cart-plus"></i> Adicionar
+                        </button>
+                        <button class="btn-primary" onclick="event.stopPropagation(); viewProduct('${produto.id}')">
+                            <i class="fas fa-eye"></i> Detalhes
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ATUALIZAR CONTADOR DO CARRINHO
+        function updateCartCount() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const count = carrinho.reduce((total, item) => total + item.quantidade, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // ADICIONAR AO CARRINHO
+        function addToCart(productId) {
+            let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const produtoExistente = carrinho.find(item => item.id === productId);
+            
+            if (produtoExistente) {
+                produtoExistente.quantidade += 1;
+            } else {
+                carrinho.push({
+                    id: productId,
+                    quantidade: 1,
+                    added: new Date().toISOString()
+                });
+            }
+            
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            updateCartCount();
+            
+            // Mostrar notificação
+            showNotification('Produto adicionado ao carrinho!', 'success');
+        }
+
+        // VER DETALHES DO PRODUTO
+        function viewProduct(productId) {
+            window.location.href = `produto.html?id=${productId}`;
+        }
+
+        // MOSTRAR NOTIFICAÇÃO
+        function showNotification(message, type = 'info') {
+            // Criar elemento de notificação
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            // Estilos da notificação
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : '#6366f1'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: var(--radius-small);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 9999;
+                animation: slideIn 0.3s ease-out;
+                box-shadow: var(--shadow);
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remover após 3 segundos
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+            
+            // Adicionar animações CSS
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // GERENCIAR MENU HAMBÚRGUER
+        function setupMenu() {
+            const menuToggle = document.getElementById('menuToggle');
+            const sideMenu = document.getElementById('sideMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
+            
+            menuToggle.addEventListener('click', () => {
+                sideMenu.classList.toggle('active');
+                menuOverlay.classList.toggle('active');
+            });
+            
+            menuOverlay.addEventListener('click', () => {
+                sideMenu.classList.remove('active');
+                menuOverlay.classList.remove('active');
+            });
+        }
+
+        // GERENCIAR BUSCA
+        function setupSearch() {
+            const searchBtn = document.getElementById('searchBtn');
+            const searchBtnMobile = document.getElementById('searchBtnMobile');
+            const searchModal = document.getElementById('searchModal');
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            
+            const openSearch = () => {
+                searchModal.classList.add('active');
+                searchInput.focus();
+            };
+            
+            const closeSearch = () => {
+                searchModal.classList.remove('active');
+                searchInput.value = '';
+                searchResults.innerHTML = '';
+            };
+            
+            searchBtn.addEventListener('click', openSearch);
+            searchBtnMobile.addEventListener('click', openSearch);
+            
+            // Fechar com ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeSearch();
+            });
+            
+            // Fechar clicando fora
+            searchModal.addEventListener('click', (e) => {
+                if (e.target === searchModal) closeSearch();
+            });
+            
+            // Busca em tempo real
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+                
+                if (term.length < 2) {
+                    searchResults.innerHTML = '';
+                    return;
+                }
+                
+                const resultados = produtos.filter(p => 
+                    p.publicado && (
+                        p.titulo.toLowerCase().includes(term) ||
+                        p.descricao.toLowerCase().includes(term) ||
+                        p.tags.some(tag => tag.toLowerCase().includes(term)) ||
+                        p.curso.toLowerCase().includes(term)
+                    )
+                ).slice(0, 10);
+                
+                searchResults.innerHTML = resultados.map(p => `
+                    <div class="search-result-item" onclick="viewProduct('${p.id}'); closeSearch()">
+                        <div style="display: flex; gap: 15px; align-items: center; padding: 15px; background: var(--glass); border-radius: var(--radius-small); margin-bottom: 10px; cursor: pointer; transition: var(--transition);">
+                            <div style="font-size: 1.5rem;">${p.capa}</div>
+                            <div>
+                                <div style="font-weight: 600;">${p.titulo}</div>
+                                <div style="font-size: 0.9rem; color: #94a3b8;">
+                                    ${p.curso === 'enfermagem' ? 'Enfermagem' : 'ESMI'} • ${p.ano}º Ano
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                if (resultados.length === 0 && term.length >= 2) {
+                    searchResults.innerHTML = `
+                        <div style="text-align: center; padding: 30px; color: #94a3b8;">
+                            <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <div>Nenhum resultado encontrado para "${term}"</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Expor função para fechar busca
+            window.closeSearch = closeSearch;
+        }
+
+        // ADICIONAR ESTILOS DE BOTÕES
+        function addButtonStyles() {
+            if (!document.querySelector('#button-styles')) {
+                const style = document.createElement('style');
+                style.id = 'button-styles';
+                style.textContent = `
+                    .btn-primary, .btn-secondary {
+                        padding: 12px 20px;
+                        border-radius: var(--radius-small);
+                        border: none;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: var(--transition);
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-size: 0.9rem;
+                    }
+                    
+                    .btn-primary {
+                        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                        color: white;
+                    }
+                    
+                    .btn-secondary {
+                        background: var(--glass);
+                        border: 1px solid var(--border-glow);
+                        color: var(--light);
+                    }
+                    
+                    .btn-primary:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+                    }
+                    
+                    .btn-secondary:hover {
+                        background: rgba(99, 102, 241, 0.2);
+                        border-color: var(--primary);
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // INICIALIZAR TUDO QUANDO A PÁGINA CARREGAR
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDatabase();
+            loadRecentProducts();
+            updateCartCount();
+            setupMenu();
+            setupSearch();
+            addButtonStyles();
+        });
+    </script>
+</body>
+</html>

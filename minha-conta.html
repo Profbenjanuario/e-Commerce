@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Minha Conta | NeuroLearn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* VARIÁVEIS E RESET */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-dark: rgba(15, 23, 42, 0.7);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 50px rgba(99, 102, 241, 0.3);
+            --radius: 20px;
+            --radius-small: 12px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* NAVBAR SUPERIOR */
+        .navbar {
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 20px;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-small);
+            color: var(--danger);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* LAYOUT PRINCIPAL */
+        .account-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        /* SIDEBAR DO USUÁRIO */
+        .account-sidebar {
+            background: var(--darker);
+            border-right: 1px solid var(--border-glow);
+            padding: 30px 20px;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .user-profile-card {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            color: white;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-avatar i {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .profile-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .account-type {
+            display: inline-block;
+            padding: 6px 15px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* MENU DA CONTA */
+        .account-menu {
+            margin-bottom: 30px;
+        }
+
+        .menu-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: var(--radius-small);
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: var(--glass);
+            color: var(--light);
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+
+        .menu-item i {
+            width: 24px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .account-content {
+            padding: 40px;
+            overflow-y: auto;
+            max-height: calc(100vh - 80px);
+        }
+
+        /* HEADER DO CONTEÚDO */
+        .content-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        .content-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .content-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* CARDS DE RESUMO */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .summary-card {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 25px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .summary-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .summary-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: var(--light);
+        }
+
+        .summary-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        /* SEÇÕES DE CONTEÚDO */
+        .content-section {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+
+        .content-section:hover {
+            border-color: var(--primary);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .section-title-large {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* TABELAS */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .account-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .account-table thead {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .account-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .account-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .account-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .account-table tbody tr:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* DOWNLOADS GRID */
+        .downloads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .download-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .download-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .download-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-expiring {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .download-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #334155, #475569);
+            border-radius: var(--radius-small);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* FORMULÁRIOS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius-small);
+            color: var(--light);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: #64748b;
+        }
+
+        /* STATUS BADGES */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-pago {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-pendente {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-cancelado {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* AÇÕES */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: var(--radius-small);
+            border: 1px solid var(--border-glow);
+            background: transparent;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-download:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .action-view:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--info);
+            color: var(--info);
+        }
+
+        .action-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* BOTÕES */
+        .btn-primary, .btn-secondary, .btn-outline {
+            padding: 14px 28px;
+            border-radius: var(--radius-small);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border-glow);
+            color: var(--light);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        /* ANIMAÇÕES */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 992px) {
+            .account-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .account-sidebar {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .account-content {
+                padding: 25px 20px;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .downloads-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-name {
+                display: none;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .section-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-header {
+                text-align: center;
+            }
+            
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* SCROLLBAR PERSONALIZADA */
+        .account-sidebar::-webkit-scrollbar,
+        .account-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .account-sidebar::-webkit-scrollbar-track,
+        .account-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .account-sidebar::-webkit-scrollbar-thumb,
+        .account-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        /* BARRA INFERIOR DE NAVEGAÇÃO (MOBILE) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-glow);
+            display: none;
+            justify-content: space-around;
+            padding: 15px 10px;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: var(--radius-small);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+
+        @media (max-width: 768px) {
+            .bottom-nav {
+                display: flex;
+            }
+            
+            .account-content {
+                padding-bottom: 80px;
+            }
+        }
+
+        /* MENSAGEM SEM DADOS */
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #64748b;
+        }
+
+        .no-data h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--light);
+        }
+
+        /* PROGRESS BAR */
+        .progress-container {
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.5s ease-out;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR SUPERIOR -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-brain"></i>
+                <span>Minha Conta</span>
+            </a>
+            
+            <div class="user-menu">
+                <div class="user-info" id="userInfo">
+                    <!-- Preenchido via JavaScript -->
+                </div>
+                <a href="index.html" class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="account-container">
+        <!-- SIDEBAR -->
+        <aside class="account-sidebar slide-in-left">
+            <!-- PERFIL DO USUÁRIO -->
+            <div class="user-profile-card">
+                <div class="profile-avatar" onclick="editProfile()" id="userAvatar">
+                    <!-- Avatar será preenchido via JS -->
+                </div>
+                <h3 class="profile-name" id="profileName">Carregando...</h3>
+                <p class="profile-email" id="profileEmail">carregando@email.com</p>
+                <span class="account-type" id="accountType">Conta Básica</span>
+            </div>
+
+            <!-- MENU DA CONTA -->
+            <nav class="account-menu">
+                <div class="menu-section">
+                    <div class="section-title">Minha Conta</div>
+                    <div class="menu-item active" data-section="overview">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Visão Geral</span>
+                    </div>
+                    <div class="menu-item" data-section="profile">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Meu Perfil</span>
+                    </div>
+                    <div class="menu-item" data-section="security">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Segurança</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-title">Minhas Compras</div>
+                    <div class="menu-item" data-section="orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Meus Pedidos</span>
+                        <span class="menu-badge" id="ordersBadge">0</span>
+                    </div>
+                    <div class="menu-item" data-section="downloads">
+                        <i class="fas fa-download"></i>
+                        <span>Meus Downloads</span>
+                        <span class="menu-badge" id="downloadsBadge">0</span>
+                    </div>
+                    <div class="menu-item" data-section="wishlist">
+                        <i class="fas fa-heart"></i>
+                        <span>Lista de Desejos</span>
+                        <span class="menu-badge" id="wishlistBadge">0</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-title">Suporte</div>
+                    <div class="menu-item" data-section="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notificações</span>
+                        <span class="menu-badge" id="notificationsBadge">0</span>
+                    </div>
+                    <div class="menu-item" data-section="support">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Ajuda & Suporte</span>
+                    </div>
+                    <div class="menu-item" onclick="deleteAccount()">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Excluir Conta</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- INFO DO PLANO -->
+            <div style="margin-top: 40px; padding: 20px; background: rgba(15, 23, 42, 0.5); border-radius: var(--radius-small); border: 1px solid var(--border-glow);">
+                <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 10px;">
+                    Seu Plano
+                </div>
+                <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; color: var(--primary);">
+                    Plano Básico
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 35%;"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>35% usado</span>
+                        <span>5/∞ downloads</span>
+                    </div>
+                </div>
+                <button class="btn-outline btn-sm" style="width: 100%; margin-top: 15px;">
+                    <i class="fas fa-crown"></i> Upgrade
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="account-content">
+            <!-- SEÇÃO: VISÃO GERAL -->
+            <section class="content-section fade-in" id="overviewSection">
+                <div class="content-header">
+                    <h1 class="content-title">Visão Geral da Conta</h1>
+                    <p class="content-subtitle">
+                        Bem-vindo de volta! Aqui está um resumo da sua atividade.
+                    </p>
+                </div>
+
+                <!-- CARDS DE RESUMO -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="summary-value" id="totalOrdersCount">0</div>
+                        <div class="summary-label">Total de Pedidos</div>
+                        <div style="color: var(--secondary); font-size: 0.9rem;">
+                            <i class="fas fa-arrow-up"></i> 2 este mês
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="summary-value" id="activeDownloads">0</div>
+                        <div class="summary-label">Downloads Ativos</div>
+                        <div style="color: var(--secondary); font-size: 0.9rem;">
+                            <i class="fas fa-check-circle"></i> Disponível
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="summary-value" id="totalSpent">0 MT</div>
+                        <div class="summary-label">Total Gasto</div>
+                        <div style="color: var(--secondary); font-size: 0.9rem;">
+                            <i class="fas fa-chart-line"></i> Economizou 150 MT
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="summary-value" id="expiringSoon">0</div>
+                        <div class="summary-label">Expirando em 7 dias</div>
+                        <div style="color: var(--warning); font-size: 0.9rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Renove agora
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOWNLOADS RECENTES -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title-large">
+                            <i class="fas fa-download"></i> Downloads Recentes
+                        </h2>
+                        <div class="section-actions">
+                            <button class="btn-outline btn-sm" onclick="showSection('downloads')">
+                                Ver Todos
+                            </button>
+                        </div>
+                    </div>
+                    <div class="downloads-grid" id="recentDownloads">
+                        <!-- Downloads serão carregados via JS -->
+                    </div>
+                </div>
+
+                <!-- PEDIDOS RECENTES -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title-large">
+                            <i class="fas fa-history"></i> Histórico de Pedidos
+                        </h2>
+                        <div class="section-actions">
+                            <button class="btn-outline btn-sm" onclick="showSection('orders')">
+                                Ver Todos
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Pedido</th>
+                                    <th>Data</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrders">
+                                <!-- Pedidos serão carregados via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: MEU PERFIL -->
+            <section class="content-section" id="profileSection" style="display: none;">
+                <div class="content-header">
+                    <h1 class="content-title">Meu Perfil</h1>
+                    <p class="content-subtitle">
+                        Gerencie suas informações pessoais e preferências.
+                    </p>
+                </div>
+
+                <form id="profileForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user"></i> Nome Completo
+                            </label>
+                            <input type="text" class="form-input" id="editFullName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" class="form-input" id="editEmail" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-phone"></i> Telefone
+                            </label>
+                            <input type="tel" class="form-input" id="editPhone" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-graduation-cap"></i> Instituição
+                            </label>
+                            <input type="text" class="form-input" id="editInstitution">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt"></i> Endereço
+                        </label>
+                        <textarea class="form-input" id="editAddress" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-birthday-cake"></i> Data de Nascimento
+                        </label>
+                        <input type="date" class="form-input" id="editBirthdate">
+                    </div>
+
+                    <div style="margin-top: 40px; padding-top: 25px; border-top: 1px solid var(--border-glow);">
+                        <h3 style="color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-bell"></i> Preferências de Notificação
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="notifEmails" checked>
+                                <span>Email de promoções</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="notifUpdates" checked>
+                                <span>Atualizações de produtos</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="notifNewsletter">
+                                <span>Newsletter semanal</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px; display: flex; gap: 15px;">
+                        <button type="button" class="btn-outline" onclick="showSection('overview')">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- SEÇÃO: SEGURANÇA -->
+            <section class="content-section" id="securitySection" style="display: none;">
+                <div class="content-header">
+                    <h1 class="content-title">Segurança da Conta</h1>
+                    <p class="content-subtitle">
+                        Gerencie a segurança da sua conta e senha.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 40px;">
+                    <h3 style="color: var(--primary); margin-bottom: 20px;">
+                        <i class="fas fa-lock"></i> Alterar Senha
+                    </h3>
+                    <form id="passwordForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Senha Atual</label>
+                                <input type="password" class="form-input" id="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nova Senha</label>
+                                <input type="password" class="form-input" id="newPassword" required>
+                                <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;">
+                                    Mínimo 8 caracteres, com letras e números
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirmar Nova Senha</label>
+                                <input type="password" class="form-input" id="confirmPassword" required>
+                            </div>
+                        </div>
+                        <div style="margin-top: 25px;">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-key"></i> Alterar Senha
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div style="margin-top: 40px; padding-top: 25px; border-top: 1px solid var(--border-glow);">
+                    <h3 style="color: var(--primary); margin-bottom: 20px;">
+                        <i class="fas fa-shield-alt"></i> Sessões Ativas
+                    </h3>
+                    <div style="background: rgba(15, 23, 42, 0.5); border-radius: var(--radius-small); padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <div style="font-weight: 600;">Este Dispositivo</div>
+                                <div style="font-size: 0.9rem; color: #94a3b8;">
+                                    Logado agora • <span id="currentDevice"></span>
+                                </div>
+                            </div>
+                            <div class="status-badge status-pago">
+                                Ativo
+                            </div>
+                        </div>
+                        <button class="btn-outline btn-sm" onclick="logoutAllDevices()">
+                            <i class="fas fa-sign-out-alt"></i> Sair de Todos os Dispositivos
+                        </button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; padding-top: 25px; border-top: 1px solid var(--border-glow);">
+                    <h3 style="color: var(--warning); margin-bottom: 15px;">
+                        <i class="fas fa-exclamation-triangle"></i> Zona de Perigo
+                    </h3>
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-small); padding: 20px;">
+                        <p style="margin-bottom: 15px; color: #fca5a5;">
+                            Ações nesta seção não podem ser desfeitas. Tenha cuidado.
+                        </p>
+                        <button class="btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash-alt"></i> Excluir Minha Conta
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: MEUS PEDIDOS -->
+            <section class="content-section" id="ordersSection" style="display: none;">
+                <div class="content-header">
+                    <h1 class="content-title">Meus Pedidos</h1>
+                    <p class="content-subtitle">
+                        Histórico completo de todas as suas compras.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <div class="filters-bar" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <div class="filter-group" style="display: flex; align-items: center; gap: 10px; background: rgba(15, 23, 42, 0.5); padding: 12px 20px; border-radius: var(--radius-small); border: 1px solid var(--border-glow);">
+                            <i class="fas fa-filter"></i>
+                            <select id="orderFilterStatus" onchange="filterOrders()">
+                                <option value="all">Todos os Status</option>
+                                <option value="pago">Pagos</option>
+                                <option value="pendente">Pendentes</option>
+                                <option value="cancelado">Cancelados</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="display: flex; align-items: center; gap: 10px; background: rgba(15, 23, 42, 0.5); padding: 12px 20px; border-radius: var(--radius-small); border: 1px solid var(--border-glow);">
+                            <i class="fas fa-calendar"></i>
+                            <select id="orderFilterDate" onchange="filterOrders()">
+                                <option value="all">Todo Período</option>
+                                <option value="month">Este Mês</option>
+                                <option value="3months">Últimos 3 Meses</option>
+                                <option value="year">Este Ano</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="account-table">
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Data</th>
+                                <th>Itens</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allOrdersTable">
+                            <!-- Todos os pedidos serão carregados via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="no-data" id="noOrdersMessage" style="display: none;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Nenhum pedido encontrado</h3>
+                    <p>Você ainda não fez nenhuma compra. Explore nossa biblioteca!</p>
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="window.location.href='catalogo.html'">
+                        <i class="fas fa-book-medical"></i> Explorar Catálogo
+                    </button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO: MEUS DOWNLOADS -->
+            <section class="content-section" id="downloadsSection" style="display: none;">
+                <div class="content-header">
+                    <h1 class="content-title">Meus Downloads</h1>
+                    <p class="content-subtitle">
+                        Todos os seus e-books disponíveis para download.
+                    </p>
+                </div>
+
+                <div id="downloadsContent">
+                    <!-- Conteúdo será carregado via JS -->
+                </div>
+            </section>
+
+            <!-- SEÇÃO: LISTA DE DESEJOS -->
+            <section class="content-section" id="wishlistSection" style="display: none;">
+                <div class="content-header">
+                    <h1 class="content-title">Lista de Desejos</h1>
+                    <p class="content-subtitle">
+                        Produtos que você salvou para comprar depois.
+                    </p>
+                </div>
+
+                <div class="downloads-grid" id="wishlistContent">
+                    <!-- Lista de desejos será carregada via JS -->
+                </div>
+            </section>
+
+            <!-- OUTRAS SEÇÕES (simplificadas) -->
+            <section class="content-section" id="notificationsSection" style="display: none;">
+                <div class="content-header">
+                    <h1 class="content-title">Notificações</h1>
+                    <p class="content-subtitle">
+                        Suas notificações e alertas.
+                    </p>
+                </div>
+                <div class="no-data">
+                    <i class="fas fa-bell-slash"></i>
+                    <h3>Nenhuma notificação</h3>
+                    <p>Você está atualizado com tudo!</p>
+                </div>
+            </section>
+
+            <section class="content-section" id="supportSection" style="display: none;">
+                <div class="content-header">
+                    <h1 class="content-title">Ajuda & Suporte</h1>
+                    <p class="content-subtitle">
+                        Precisa de ajuda? Estamos aqui para você.
+                    </p>
+                </div>
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-headset" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px;">Entre em Contato</h3>
+                    <p style="color: #94a3b8; margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Para suporte, entre em contato pelo email: suporte@neurolearn.com
+                    </p>
+                    <button class="btn-primary">
+                        <i class="fas fa-envelope"></i> Enviar Mensagem
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- BARRA INFERIOR (MOBILE) -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span class="nav-label">Home</span>
+        </a>
+        
+        <a href="catalogo.html" class="nav-item">
+            <i class="fas fa-book-medical"></i>
+            <span class="nav-label">Catálogo</span>
+        </a>
+        
+        <a href="carrinho.html" class="nav-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="nav-label">Carrinho</span>
+            <span class="badge" id="mobileCartCount">0</span>
+        </a>
+        
+        <a href="minha-conta.html" class="nav-item active">
+            <i class="fas fa-user"></i>
+            <span class="nav-label">Conta</span>
+        </a>
+        
+        <a href="admin.html" class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span class="nav-label">Admin</span>
+        </a>
+    </div>
+
+    <script>
+        // DADOS DO USUÁRIO
+        let currentUser = null;
+        let userData = {
+            pedidos: [],
+            downloads: [],
+            wishlist: [],
+            notifications: []
+        };
+
+        // INICIALIZAR ÁREA DO CLIENTE
+        function initializeAccount() {
+            // Verificar se o usuário está logado
+            checkUserLogin();
+            
+            // Carregar dados do usuário
+            loadUserData();
+            
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Atualizar interface
+            updateUI();
+        }
+
+        // VERIFICAR LOGIN
+        function checkUserLogin() {
+            currentUser = JSON.parse(localStorage.getItem('current_user'));
+            
+            if (!currentUser) {
+                // Usuário não logado, redirecionar para login
+                showNotification('Por favor, faça login para acessar sua conta', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html?redirect=minha-conta.html';
+                }, 2000);
+                return false;
+            }
+            
+            return true;
+        }
+
+        // CARREGAR DADOS DO USUÁRIO
+        function loadUserData() {
+            // Carregar pedidos do usuário
+            const allVendas = JSON.parse(localStorage.getItem('vendas')) || [];
+            userData.pedidos = allVendas.filter(venda => 
+                venda.cliente && venda.cliente.email === currentUser.email
+            );
+            
+            // Carregar downloads (simulado)
+            userData.downloads = [
+                {
+                    id: 'dl1',
+                    produto_id: 'enf1',
+                    pedido_id: 'ORD-001',
+                    produto: 'Integração e Orientações Gerais',
+                    data_compra: '2024-02-10',
+                    expira_em: '2024-03-10',
+                    downloads_restantes: 4,
+                    downloads_max: 5,
+                    status: 'ativo'
+                },
+                {
+                    id: 'dl2',
+                    produto_id: 'enf2',
+                    pedido_id: 'ORD-002',
+                    produto: 'Ciências Biológicas I',
+                    data_compra: '2024-02-12',
+                    expira_em: '2024-03-12',
+                    downloads_restantes: 3,
+                    downloads_max: 5,
+                    status: 'ativo'
+                }
+            ];
+            
+            // Carregar lista de desejos
+            const wishlistIds = JSON.parse(localStorage.getItem('wishlist')) || [];
+            const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+            userData.wishlist = produtos.filter(produto => 
+                wishlistIds.includes(produto.id)
+            );
+            
+            // Carregar notificações (simulado)
+            userData.notifications = [
+                {
+                    id: 'notif1',
+                    titulo: 'Novo conteúdo disponível',
+                    mensagem: 'Anatomia Avançada foi adicionado à biblioteca',
+                    data: '2024-02-15',
+                    lida: false
+                }
+            ];
+        }
+
+        // ATUALIZAR INTERFACE
+        function updateUI() {
+            // Atualizar navbar
+            updateNavbar();
+            
+            // Atualizar perfil na sidebar
+            updateProfile();
+            
+            // Atualizar badges
+            updateBadges();
+            
+            // Atualizar seção ativa
+            updateActiveSection();
+            
+            // Atualizar dados nas seções
+            loadOverviewData();
+            loadOrdersData();
+            loadDownloadsData();
+            loadWishlistData();
+            
+            // Atualizar contador do carrinho
+            updateCartCount();
+        }
+
+        // ATUALIZAR NAVBAR
+        function updateNavbar() {
+            if (currentUser) {
+                document.getElementById('userInfo').innerHTML = `
+                    <div class="user-avatar">
+                        ${currentUser.nome ? currentUser.nome.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <div class="user-name">${currentUser.nome || 'Usuário'}</div>
+                `;
+            }
+        }
+
+        // ATUALIZAR PERFIL
+        function updateProfile() {
+            document.getElementById('profileName').textContent = currentUser.nome || 'Usuário';
+            document.getElementById('profileEmail').textContent = currentUser.email || 'Não informado';
+            document.getElementById('userAvatar').innerHTML = `
+                ${currentUser.nome ? currentUser.nome.charAt(0).toUpperCase() : 'U'}
+                <i class="fas fa-camera"></i>
+            `;
+            
+            // Preencher formulário de perfil
+            if (currentUser) {
+                document.getElementById('editFullName').value = currentUser.nome || '';
+                document.getElementById('editEmail').value = currentUser.email || '';
+                document.getElementById('editPhone').value = currentUser.telefone || '';
+                document.getElementById('editInstitution').value = currentUser.instituicao || '';
+                document.getElementById('editAddress').value = currentUser.endereco || '';
+            }
+        }
+
+        // ATUALIZAR BADGES
+        function updateBadges() {
+            document.getElementById('ordersBadge').textContent = userData.pedidos.length;
+            document.getElementById('downloadsBadge').textContent = userData.downloads.length;
+            document.getElementById('wishlistBadge').textContent = userData.wishlist.length;
+            document.getElementById('notificationsBadge').textContent = userData.notifications.filter(n => !n.lida).length;
+        }
+
+        // CARREGAR DADOS DA VISÃO GERAL
+        function loadOverviewData() {
+            // Total de pedidos
+            document.getElementById('totalOrdersCount').textContent = userData.pedidos.length;
+            
+            // Downloads ativos
+            document.getElementById('activeDownloads').textContent = userData.downloads.length;
+            
+            // Total gasto
+            const totalGasto = userData.pedidos.reduce((total, pedido) => {
+                return total + (pedido.total || 0);
+            }, 0);
+            document.getElementById('totalSpent').textContent = `${totalGasto.toFixed(2)} MT`;
+            
+            // Expirando em breve
+            const hoje = new Date();
+            const daqui7Dias = new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000);
+            const expirando = userData.downloads.filter(download => {
+                const expira = new Date(download.expira_em);
+                return expira <= daqui7Dias && expira >= hoje;
+            }).length;
+            document.getElementById('expiringSoon').textContent = expirando;
+            
+            // Downloads recentes (últimos 3)
+            const recentDownloads = userData.downloads.slice(0, 3);
+            const container = document.getElementById('recentDownloads');
+            
+            if (recentDownloads.length > 0) {
+                container.innerHTML = recentDownloads.map(download => `
+                    <div class="download-card">
+                        <div class="download-badge ${download.downloads_restantes > 2 ? 'badge-available' : 'badge-expiring'}">
+                            ${download.downloads_restantes} restantes
+                        </div>
+                        <div class="download-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h4 style="margin-bottom: 10px; font-weight: 600;">${download.produto}</h4>
+                        <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px;">
+                            Comprado em: ${formatDate(download.data_compra)}
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${(download.downloads_restantes / download.downloads_max) * 100}%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Expira em: ${formatDate(download.expira_em)}</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button class="btn-primary btn-sm" style="flex: 1;" onclick="downloadProduct('${download.id}')">
+                                <i class="fas fa-download"></i> Baixar
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="no-data" style="grid-column: 1 / -1;">
+                        <i class="fas fa-download"></i>
+                        <h3>Nenhum download disponível</h3>
+                        <p>Faça sua primeira compra para começar!</p>
+                    </div>
+                `;
+            }
+            
+            // Pedidos recentes (últimos 5)
+            const recentOrders = userData.pedidos.slice(0, 5);
+            const ordersContainer = document.getElementById('recentOrders');
+            
+            if (recentOrders.length > 0) {
+                ordersContainer.innerHTML = recentOrders.map(pedido => `
+                    <tr>
+                        <td><strong>${pedido.id}</strong></td>
+                        <td>${formatDate(pedido.data)}</td>
+                        <td>${pedido.total ? pedido.total.toFixed(2) + ' MT' : '0 MT'}</td>
+                        <td>
+                            <span class="status-badge status-${pedido.status || 'pendente'}">
+                                ${getStatusText(pedido.status)}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn action-view" onclick="viewOrder('${pedido.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-download" onclick="downloadOrder('${pedido.id}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                ordersContainer.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">
+                            <i class="fas fa-shopping-cart" style="font-size: 2rem; margin-bottom: 15px; display: block;"></i>
+                            Nenhum pedido encontrado
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // CARREGAR TODOS OS PEDIDOS
+        function loadOrdersData() {
+            const container = document.getElementById('allOrdersTable');
+            
+            if (userData.pedidos.length > 0) {
+                container.innerHTML = userData.pedidos.map(pedido => `
+                    <tr>
+                        <td><strong>${pedido.id}</strong></td>
+                        <td>${formatDate(pedido.data)}</td>
+                        <td>
+                            <div style="font-size: 0.9rem;">
+                                ${pedido.items ? pedido.items.length : 0} item(s)
+                            </div>
+                        </td>
+                        <td><strong>${pedido.total ? pedido.total.toFixed(2) + ' MT' : '0 MT'}</strong></td>
+                        <td>
+                            <span class="status-badge status-${pedido.status || 'pendente'}">
+                                ${getStatusText(pedido.status)}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn action-view" onclick="viewOrder('${pedido.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-download" onclick="downloadOrder('${pedido.id}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="action-btn" onclick="printReceipt('${pedido.id}')">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                document.getElementById('noOrdersMessage').style.display = 'none';
+            } else {
+                container.innerHTML = '';
+                document.getElementById('noOrdersMessage').style.display = 'block';
+            }
+        }
+
+        // CARREGAR DOWNLOADS
+        function loadDownloadsData() {
+            const container = document.getElementById('downloadsContent');
+            
+            if (userData.downloads.length > 0) {
+                container.innerHTML = `
+                    <div class="downloads-grid">
+                        ${userData.downloads.map(download => `
+                            <div class="download-card">
+                                <div class="download-badge ${download.downloads_restantes > 2 ? 'badge-available' : 'badge-expiring'}">
+                                    ${download.downloads_restantes}/${download.downloads_max} downloads
+                                </div>
+                                <div class="download-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <h4 style="margin-bottom: 10px; font-weight: 600;">${download.produto}</h4>
+                                <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 10px;">
+                                    Pedido: ${download.pedido_id}
+                                </div>
+                                <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px;">
+                                    Comprado em: ${formatDate(download.data_compra)}
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${(download.downloads_restantes / download.downloads_max) * 100}%;"></div>
+                                    </div>
+                                    <div class="progress-text">
+                                        <span>Expira em: ${formatDate(download.expira_em)}</span>
+                                        <span>${download.downloads_restantes} restantes</span>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <button class="btn-primary btn-sm" onclick="downloadProduct('${download.id}')">
+                                        <i class="fas fa-download"></i> Baixar
+                                    </button>
+                                    <button class="btn-outline btn-sm" onclick="resendDownloadLink('${download.id}')">
+                                        <i class="fas fa-envelope"></i> Reenviar
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-download"></i>
+                        <h3>Nenhum download disponível</h3>
+                        <p>Faça sua primeira compra para começar a baixar conteúdos!</p>
+                        <button class="btn-primary" style="margin-top: 20px;" onclick="window.location.href='catalogo.html'">
+                            <i class="fas fa-book-medical"></i> Explorar Catálogo
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // CARREGAR LISTA DE DESEJOS
+        function loadWishlistData() {
+            const container = document.getElementById('wishlistContent');
+            
+            if (userData.wishlist.length > 0) {
+                container.innerHTML = userData.wishlist.map(produto => `
+                    <div class="download-card">
+                        <div class="download-icon">
+                            ${produto.capa || '📘'}
+                        </div>
+                        <h4 style="margin-bottom: 10px; font-weight: 600;">${produto.titulo}</h4>
+                        <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 10px;">
+                            ${produto.curso === 'enfermagem' ? 'Enfermagem' : 'ESMI'} • ${produto.ano}º Ano
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <span style="font-weight: 700; color: var(--secondary);">
+                                ${produto.preco_desconto || produto.preco} MT
+                            </span>
+                            ${produto.preco_desconto ? `
+                                <span style="font-size: 0.9rem; color: #94a3b8; text-decoration: line-through; margin-left: 5px;">
+                                    ${produto.preco} MT
+                                </span>
+                            ` : ''}
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <button class="btn-primary btn-sm" onclick="addToCartFromWishlist('${produto.id}')">
+                                <i class="fas fa-cart-plus"></i> Comprar
+                            </button>
+                            <button class="btn-outline btn-sm" onclick="removeFromWishlist('${produto.id}')">
+                                <i class="fas fa-trash"></i> Remover
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="no-data" style="grid-column: 1 / -1;">
+                        <i class="fas fa-heart"></i>
+                        <h3>Lista de desejos vazia</h3>
+                        <p>Adicione produtos à sua lista de desejos para encontrá-los facilmente depois!</p>
+                        <button class="btn-primary" style="margin-top: 20px;" onclick="window.location.href='catalogo.html'">
+                            <i class="fas fa-book-medical"></i> Explorar Catálogo
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // FILTRAR PEDIDOS
+        function filterOrders() {
+            const status = document.getElementById('orderFilterStatus').value;
+            const dateRange = document.getElementById('orderFilterDate').value;
+            
+            let filtered = userData.pedidos;
+            
+            if (status !== 'all') {
+                filtered = filtered.filter(pedido => pedido.status === status);
+            }
+            
+            if (dateRange !== 'all') {
+                const hoje = new Date();
+                let dataLimite = new Date();
+                
+                switch(dateRange) {
+                    case 'month':
+                        dataLimite.setMonth(hoje.getMonth() - 1);
+                        break;
+                    case '3months':
+                        dataLimite.setMonth(hoje.getMonth() - 3);
+                        break;
+                    case 'year':
+                        dataLimite.setFullYear(hoje.getFullYear() - 1);
+                        break;
+                }
+                
+                filtered = filtered.filter(pedido => {
+                    const dataPedido = new Date(pedido.data);
+                    return dataPedido >= dataLimite;
+                });
+            }
+            
+            const container = document.getElementById('allOrdersTable');
+            
+            if (filtered.length > 0) {
+                container.innerHTML = filtered.map(pedido => `
+                    <tr>
+                        <td><strong>${pedido.id}</strong></td>
+                        <td>${formatDate(pedido.data)}</td>
+                        <td>${pedido.items ? pedido.items.length : 0} item(s)</td>
+                        <td><strong>${pedido.total ? pedido.total.toFixed(2) + ' MT' : '0 MT'}</strong></td>
+                        <td>
+                            <span class="status-badge status-${pedido.status || 'pendente'}">
+                                ${getStatusText(pedido.status)}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn action-view" onclick="viewOrder('${pedido.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-download" onclick="downloadOrder('${pedido.id}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                document.getElementById('noOrdersMessage').style.display = 'none';
+            } else {
+                container.innerHTML = '';
+                document.getElementById('noOrdersMessage').style.display = 'block';
+            }
+        }
+
+        // MOSTRAR SEÇÃO
+        function showSection(sectionId) {
+            // Esconder todas as seções
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Remover active de todos os itens do menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Mostrar seção selecionada
+            document.getElementById(`${sectionId}Section`).style.display = 'block';
+            
+            // Ativar item do menu correspondente
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+            
+            // Atualizar dados da seção se necessário
+            if (sectionId === 'orders') {
+                loadOrdersData();
+            } else if (sectionId === 'downloads') {
+                loadDownloadsData();
+            } else if (sectionId === 'wishlist') {
+                loadWishlistData();
+            }
+        }
+
+        // ATUALIZAR SEÇÃO ATIVA
+        function updateActiveSection() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const section = urlParams.get('section') || 'overview';
+            showSection(section);
+        }
+
+        // FUNÇÕES UTILITÁRIAS
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                pago: 'Pago',
+                pendente: 'Pendente',
+                cancelado: 'Cancelado'
+            };
+            return statusMap[status] || 'Pendente';
+        }
+
+        // FUNÇÕES DE AÇÃO
+        function editProfile() {
+            showSection('profile');
+        }
+
+        function saveProfile() {
+            const nome = document.getElementById('editFullName').value;
+            const email = document.getElementById('editEmail').value;
+            const telefone = document.getElementById('editPhone').value;
+            const instituicao = document.getElementById('editInstitution').value;
+            const endereco = document.getElementById('editAddress').value;
+            
+            // Atualizar usuário atual
+            currentUser.nome = nome;
+            currentUser.email = email;
+            currentUser.telefone = telefone;
+            currentUser.instituicao = instituicao;
+            currentUser.endereco = endereco;
+            
+            // Salvar no localStorage
+            localStorage.setItem('current_user', JSON.stringify(currentUser));
+            
+            // Atualizar vendas (para manter consistência)
+            const vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+            vendas.forEach(venda => {
+                if (venda.cliente && venda.cliente.email === currentUser.email) {
+                    venda.cliente = { ...venda.cliente, ...currentUser };
+                }
+            });
+            localStorage.setItem('vendas', JSON.stringify(vendas));
+            
+            // Atualizar interface
+            updateProfile();
+            showNotification('Perfil atualizado com sucesso!', 'success');
+            showSection('overview');
+        }
+
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                showNotification('As senhas não coincidem', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                showNotification('A senha deve ter pelo menos 8 caracteres', 'error');
+                return;
+            }
+            
+            // Em produção, aqui verificaria a senha atual no servidor
+            // Para demo, apenas simulamos sucesso
+            showNotification('Senha alterada com sucesso!', 'success');
+            document.getElementById('passwordForm').reset();
+        }
+
+        function downloadProduct(downloadId) {
+            const download = userData.downloads.find(d => d.id === downloadId);
+            if (download && download.downloads_restantes > 0) {
+                // Simular download
+                showNotification(`Baixando: ${download.produto}`, 'success');
+                
+                // Atualizar contador
+                download.downloads_restantes--;
+                if (download.downloads_restantes === 0) {
+                    download.status = 'expirado';
+                }
+                
+                // Atualizar interface
+                loadDownloadsData();
+                loadOverviewData();
+            } else {
+                showNotification('Downloads esgotados para este produto', 'warning');
+            }
+        }
+
+        function downloadOrder(orderId) {
+            const pedido = userData.pedidos.find(p => p.id === orderId);
+            if (pedido) {
+                showNotification(`Preparando download do pedido ${orderId}...`, 'info');
+                // Em produção, geraria um arquivo ZIP com todos os produtos
+            }
+        }
+
+        function viewOrder(orderId) {
+            const pedido = userData.pedidos.find(p => p.id === orderId);
+            if (pedido) {
+                // Em produção, abriria um modal com detalhes
+                alert(`Detalhes do Pedido ${orderId}\n\nData: ${formatDate(pedido.data)}\nTotal: ${pedido.total} MT\nStatus: ${pedido.status}`);
+            }
+        }
+
+        function resendDownloadLink(downloadId) {
+            showNotification('Link de download reenviado para o seu email!', 'success');
+        }
+
+        function addToCartFromWishlist(productId) {
+            // Adicionar ao carrinho
+            let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const produtoExistente = carrinho.find(item => item.id === productId);
+            
+            if (!produtoExistente) {
+                carrinho.push({
+                    id: productId,
+                    quantidade: 1,
+                    added: new Date().toISOString()
+                });
+                localStorage.setItem('carrinho', JSON.stringify(carrinho));
+                
+                // Remover da lista de desejos
+                removeFromWishlist(productId);
+                
+                showNotification('Produto adicionado ao carrinho!', 'success');
+                updateCartCount();
+            } else {
+                showNotification('Este produto já está no seu carrinho', 'info');
+            }
+        }
+
+        function removeFromWishlist(productId) {
+            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            wishlist = wishlist.filter(id => id !== productId);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            
+            // Recarregar dados
+            loadUserData();
+            loadWishlistData();
+            updateBadges();
+            
+            showNotification('Produto removido da lista de desejos', 'info');
+        }
+
+        function logoutAllDevices() {
+            if (confirm('Deseja sair de todos os dispositivos?')) {
+                localStorage.removeItem('current_user');
+                localStorage.removeItem('session_token');
+                window.location.href = 'login.html';
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('Tem certeza que deseja excluir sua conta? Esta ação é irreversível e todos os seus dados serão perdidos.')) {
+                // Remover usuário do localStorage
+                localStorage.removeItem('current_user');
+                localStorage.removeItem('session_token');
+                
+                // Em produção, enviaria requisição para API
+                showNotification('Conta excluída com sucesso. Redirecionando...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        }
+
+        function logout() {
+            if (confirm('Deseja sair da sua conta?')) {
+                localStorage.removeItem('current_user');
+                localStorage.removeItem('session_token');
+                window.location.href = 'index.html';
+            }
+        }
+
+        function printReceipt(orderId) {
+            showNotification('Funcionalidade de impressão em desenvolvimento', 'info');
+        }
+
+        function updateCartCount() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const count = carrinho.reduce((total, item) => total + (item.quantidade || 1), 0);
+            document.getElementById('mobileCartCount').textContent = count;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 30px;
+                background: ${type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : type === 'error' ? '#ef4444' : '#6366f1'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: var(--radius-small);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 9999;
+                animation: slideIn 0.3s ease-out;
+                box-shadow: var(--shadow);
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // CONFIGURAR EVENT LISTENERS
+        function setupEventListeners() {
+            // Menu da sidebar
+            document.querySelectorAll('.menu-item[data-section]').forEach(item => {
+                item.addEventListener('click', () => {
+                    showSection(item.dataset.section);
+                });
+            });
+            
+            // Formulário de perfil
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveProfile();
+            });
+            
+            // Formulário de senha
+            document.getElementById('passwordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                changePassword();
+            });
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+            
+            // Dispositivo atual
+            const deviceInfo = navigator.userAgent;
+            document.getElementById('currentDevice').textContent = 
+                deviceInfo.includes('Mobile') ? 'Mobile' : 'Desktop';
+        }
+
+        // INICIALIZAR
+        document.addEventListener('DOMContentLoaded', initializeAccount);
+    </script>
+</body>
+</html>

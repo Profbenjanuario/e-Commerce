@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Painel Admin | NeuroLearn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* VARIÁVEIS E RESET */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-dark: rgba(15, 23, 42, 0.7);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 50px rgba(99, 102, 241, 0.3);
+            --radius: 20px;
+            --radius-small: 12px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* LAYOUT ADMIN */
+        .admin-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .admin-sidebar {
+            background: var(--darker);
+            border-right: 1px solid var(--border-glow);
+            padding: 30px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .admin-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .admin-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: var(--radius-small);
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: var(--glass);
+            color: var(--light);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+
+        .nav-item i {
+            width: 24px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .admin-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        /* HEADER DO PAINEL */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        .header-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* CARDS DE MÉTRICAS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 25px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: var(--light);
+        }
+
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .metric-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .metric-change.positive {
+            color: var(--secondary);
+        }
+
+        .metric-change.negative {
+            color: var(--danger);
+        }
+
+        /* GRÁFICOS */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 25px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .chart-placeholder {
+            height: 250px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: var(--radius-small);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* TABELAS */
+        .tables-section {
+            margin-top: 40px;
+        }
+
+        .table-card {
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table thead {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .admin-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .admin-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .admin-table tbody tr:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* STATUS BADGES */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-pago {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-pendente {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-cancelado {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-publicado {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-rascunho {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        /* AÇÕES DA TABELA */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: var(--radius-small);
+            border: 1px solid var(--border-glow);
+            background: transparent;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-edit:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--info);
+            color: var(--info);
+        }
+
+        .action-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .action-view:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        /* FORMULÁRIOS DE CRIAÇÃO */
+        .form-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .form-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .form-container {
+            background: var(--darker);
+            border-radius: var(--radius);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 2px solid var(--border-glow);
+            position: relative;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-glow);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius-small);
+            color: var(--light);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-glow);
+            border-radius: var(--radius-small);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .file-upload i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-glow);
+        }
+
+        /* FILTROS */
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 12px 20px;
+            border-radius: var(--radius-small);
+            border: 1px solid var(--border-glow);
+        }
+
+        .filter-group select, .filter-group input {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            outline: none;
+            min-width: 120px;
+        }
+
+        /* PAGINAÇÃO */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-glow);
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-small);
+            background: var(--glass);
+            border: 1px solid var(--border-glow);
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .page-btn:hover:not(.active) {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        /* BOTÕES */
+        .btn-primary, .btn-secondary, .btn-danger, .btn-outline {
+            padding: 14px 28px;
+            border-radius: var(--radius-small);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border-glow);
+            color: var(--light);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        /* ANIMAÇÕES */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        .slide-in-up {
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-sidebar {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-content {
+                padding: 20px 15px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-card {
+                padding: 20px;
+            }
+            
+            .form-container {
+                padding: 25px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-bar {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+        }
+
+        /* SCROLLBAR PERSONALIZADA */
+        .admin-sidebar::-webkit-scrollbar,
+        .admin-content::-webkit-scrollbar,
+        .form-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .admin-sidebar::-webkit-scrollbar-track,
+        .admin-content::-webkit-scrollbar-track,
+        .form-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .admin-sidebar::-webkit-scrollbar-thumb,
+        .admin-content::-webkit-scrollbar-thumb,
+        .form-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .admin-sidebar::-webkit-scrollbar-thumb:hover,
+        .admin-content::-webkit-scrollbar-thumb:hover,
+        .form-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="admin-container">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar slide-in-left">
+            <div class="sidebar-header">
+                <div class="admin-logo">NeuroLearn</div>
+                <div class="admin-avatar">A</div>
+            </div>
+
+            <!-- NAVEGAÇÃO -->
+            <nav class="admin-nav">
+                <div class="nav-section">
+                    <div class="section-title">Principal</div>
+                    <div class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="nav-item" data-section="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                        <span class="nav-badge">3</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="section-title">Conteúdo</div>
+                    <div class="nav-item" data-section="products">
+                        <i class="fas fa-book-medical"></i>
+                        <span>Produtos</span>
+                        <span class="nav-badge" id="productsCount">0</span>
+                    </div>
+                    <div class="nav-item" data-section="categories">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Categorias</span>
+                    </div>
+                    <div class="nav-item" data-section="courses">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Cursos</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="section-title">Vendas</div>
+                    <div class="nav-item" data-section="orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Pedidos</span>
+                        <span class="nav-badge" id="ordersCount">0</span>
+                    </div>
+                    <div class="nav-item" data-section="transactions">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Transações</span>
+                    </div>
+                    <div class="nav-item" data-section="customers">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                        <span class="nav-badge" id="customersCount">0</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="section-title">Configurações</div>
+                    <div class="nav-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Configurações</span>
+                    </div>
+                    <div class="nav-item" data-section="users">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Usuários Admin</span>
+                    </div>
+                    <div class="nav-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sair</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- STATUS DO SISTEMA -->
+            <div style="margin-top: 40px; padding: 20px; background: rgba(15, 23, 42, 0.5); border-radius: var(--radius-small); border: 1px solid var(--border-glow);">
+                <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 10px;">
+                    Status do Sistema
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--secondary);"></div>
+                    <span style="font-size: 0.9rem;">Online</span>
+                </div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 10px;">
+                    Última atualização: <span id="lastUpdate">Agora</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="admin-content">
+            <!-- HEADER -->
+            <div class="admin-header">
+                <h1 class="header-title" id="pageTitle">Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn-outline" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Atualizar
+                    </button>
+                    <button class="btn-primary" id="addProductBtn">
+                        <i class="fas fa-plus"></i> Novo Produto
+                    </button>
+                </div>
+            </div>
+
+            <!-- DASHBOARD -->
+            <section class="dashboard-section fade-in" id="dashboardSection">
+                <!-- MÉTRICAS -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="metric-value" id="totalRevenue">0 MT</div>
+                        <div class="metric-label">Receita Total</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>12.5% este mês</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="metric-value" id="totalOrders">0</div>
+                        <div class="metric-label">Total de Pedidos</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>8.2% este mês</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="metric-value" id="totalCustomers">0</div>
+                        <div class="metric-label">Total de Clientes</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>5.7% este mês</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="metric-value" id="totalDownloads">0</div>
+                        <div class="metric-label">Total de Downloads</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>15.3% este mês</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRÁFICOS -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Vendas por Mês</h3>
+                            <select class="form-select" style="width: auto;">
+                                <option>Últimos 6 meses</option>
+                                <option>Últimos 12 meses</option>
+                                <option>Este ano</option>
+                            </select>
+                        </div>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <div>Grafíco de vendas por mês</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Produtos Mais Vendidos</h3>
+                            <select class="form-select" style="width: auto;">
+                                <option>Este mês</option>
+                                <option>Este ano</option>
+                                <option>Todos</option>
+                            </select>
+                        </div>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-pie" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <div>Grafíco de produtos mais vendidos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PEDIDOS RECENTES -->
+                <div class="tables-section">
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h3 class="table-title">
+                                <i class="fas fa-clock"></i> Pedidos Recentes
+                            </h3>
+                            <div class="table-actions">
+                                <button class="btn-outline btn-sm" onclick="showSection('orders')">
+                                    Ver Todos
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table" id="recentOrdersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Data</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Pedidos serão carregados via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- PRODUTOS POPULARES -->
+                    <div class="table-card">
+                        <div class="table-header">
+                            <h3 class="table-title">
+                                <i class="fas fa-star"></i> Produtos Populares
+                            </h3>
+                            <div class="table-actions">
+                                <button class="btn-outline btn-sm" onclick="showSection('products')">
+                                    Ver Todos
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table" id="popularProductsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Produto</th>
+                                        <th>Categoria</th>
+                                        <th>Preço</th>
+                                        <th>Downloads</th>
+                                        <th>Avaliação</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Produtos serão carregados via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO DE PRODUTOS -->
+            <section class="products-section" id="productsSection" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fas fa-book-medical"></i> Gerenciar Produtos
+                        </h3>
+                        <div class="table-actions">
+                            <div class="filters-bar">
+                                <div class="filter-group">
+                                    <i class="fas fa-filter"></i>
+                                    <select id="productCategoryFilter">
+                                        <option value="">Todas Categorias</option>
+                                        <option value="enfermagem">Enfermagem</option>
+                                        <option value="esmi">ESMI</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <i class="fas fa-sort"></i>
+                                    <select id="productSortFilter">
+                                        <option value="recentes">Mais Recentes</option>
+                                        <option value="populares">Mais Populares</option>
+                                        <option value="preco_asc">Preço: Menor → Maior</option>
+                                        <option value="preco_desc">Preço: Maior → Menor</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="productSearch" placeholder="Buscar produto...">
+                                </div>
+                            </div>
+                            <button class="btn-primary" id="addNewProductBtn">
+                                <i class="fas fa-plus"></i> Adicionar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Capa</th>
+                                    <th>Título</th>
+                                    <th>Curso</th>
+                                    <th>Ano/Sem</th>
+                                    <th>Preço</th>
+                                    <th>Downloads</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Produtos serão carregados via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO DE PEDIDOS -->
+            <section class="orders-section" id="ordersSection" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fas fa-shopping-cart"></i> Gerenciar Pedidos
+                        </h3>
+                        <div class="table-actions">
+                            <div class="filters-bar">
+                                <div class="filter-group">
+                                    <i class="fas fa-filter"></i>
+                                    <select id="orderStatusFilter">
+                                        <option value="">Todos Status</option>
+                                        <option value="pago">Pago</option>
+                                        <option value="pendente">Pendente</option>
+                                        <option value="cancelado">Cancelado</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <i class="fas fa-calendar"></i>
+                                    <select id="orderDateFilter">
+                                        <option value="">Todo Período</option>
+                                        <option value="hoje">Hoje</option>
+                                        <option value="semana">Esta Semana</option>
+                                        <option value="mes">Este Mês</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="ordersTable">
+                            <thead>
+                                <tr>
+                                    <th>Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Data</th>
+                                    <th>Produtos</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Pedidos serão carregados via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- OUTRAS SEÇÕES (simplificadas) -->
+            <section class="customers-section" id="customersSection" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fas fa-users"></i> Gerenciar Clientes
+                        </h3>
+                    </div>
+                    <div style="padding: 60px; text-align: center; color: #94a3b8;">
+                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3 style="margin-bottom: 15px;">Seção de Clientes</h3>
+                        <p>Gerenciamento completo de clientes e histórico de compras.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-section" id="settingsSection" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fas fa-cog"></i> Configurações do Sistema
+                        </h3>
+                    </div>
+                    <div style="padding: 60px; text-align: center; color: #94a3b8;">
+                        <i class="fas fa-cogs" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3 style="margin-bottom: 15px;">Configurações</h3>
+                        <p>Configurações do sistema, métodos de pagamento, templates de email, etc.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL DE CRIAÇÃO DE PRODUTO -->
+    <div class="form-modal" id="productModal">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 class="form-title">
+                    <i class="fas fa-book-medical"></i> Novo Produto
+                </h2>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="productForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-heading"></i> Título do Produto
+                        </label>
+                        <input type="text" class="form-input" id="productTitle" required
+                               placeholder="Ex: Anatomia Humana Básica">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-graduation-cap"></i> Curso
+                        </label>
+                        <select class="form-select" id="productCourse" required>
+                            <option value="">Selecione o curso</option>
+                            <option value="enfermagem">Enfermagem Geral</option>
+                            <option value="esmi">ESMI</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-calendar"></i> Ano
+                        </label>
+                        <select class="form-select" id="productYear" required>
+                            <option value="">Selecione o ano</option>
+                            <option value="1">1º Ano</option>
+                            <option value="2">2º Ano</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-clock"></i> Semestre
+                        </label>
+                        <select class="form-select" id="productSemester" required>
+                            <option value="">Selecione o semestre</option>
+                            <option value="1">1º Semestre</option>
+                            <option value="2">2º Semestre</option>
+                            <option value="3">3º Semestre</option>
+                            <option value="4">4º Semestre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-money-bill"></i> Preço Normal
+                        </label>
+                        <input type="number" class="form-input" id="productPrice" required
+                               placeholder="Ex: 200" min="0" step="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tag"></i> Preço Promocional
+                        </label>
+                        <input type="number" class="form-input" id="productDiscountPrice"
+                               placeholder="Ex: 150 (opcional)" min="0" step="10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-align-left"></i> Descrição Curta
+                    </label>
+                    <textarea class="form-textarea" id="productShortDesc" required
+                              placeholder="Descrição breve do produto (máx. 150 caracteres)"
+                              maxlength="150"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-file-alt"></i> Descrição Completa
+                    </label>
+                    <textarea class="form-textarea" id="productFullDesc" required
+                              placeholder="Descrição detalhada do conteúdo do produto"
+                              rows="5"></textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tags"></i> Tags/Palavras-chave
+                        </label>
+                        <input type="text" class="form-input" id="productTags"
+                               placeholder="Separe com vírgulas (ex: anatomia, biologia, saúde)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-video"></i> URL do Vídeo (opcional)
+                        </label>
+                        <input type="url" class="form-input" id="productVideoUrl"
+                               placeholder="https://youtube.com/...">
+                    </div>
+                </div>
+
+                <!-- UPLOAD DE ARQUIVOS -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-image"></i> Capa do Produto
+                        </label>
+                        <div class="file-upload" onclick="document.getElementById('coverUpload').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div>Clique para fazer upload da capa</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 10px;">
+                                PNG, JPG ou SVG (máx. 5MB)
+                            </div>
+                        </div>
+                        <input type="file" id="coverUpload" accept="image/*" style="display: none;">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-file-pdf"></i> Arquivo PDF
+                        </label>
+                        <div class="file-upload" onclick="document.getElementById('pdfUpload').click()">
+                            <i class="fas fa-file-upload"></i>
+                            <div>Clique para fazer upload do PDF</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 10px;">
+                                PDF (máx. 50MB)
+                            </div>
+                        </div>
+                        <input type="file" id="pdfUpload" accept=".pdf" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-list-ol"></i> Conteúdo Programático
+                    </label>
+                    <div style="margin-bottom: 15px;">
+                        <button type="button" class="btn-outline btn-sm" onclick="addContentItem()">
+                            <i class="fas fa-plus"></i> Adicionar Item
+                        </button>
+                    </div>
+                    <div id="contentItems">
+                        <!-- Itens de conteúdo serão adicionados dinamicamente -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-toggle-on"></i> Status do Produto
+                    </label>
+                    <div style="display: flex; gap: 20px; margin-top: 10px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="productStatus" value="published" checked>
+                            <span>Publicado</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="productStatus" value="draft">
+                            <span>Rascunho</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Salvar Produto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALHES DO PEDIDO -->
+    <div class="form-modal" id="orderModal">
+        <div class="form-container">
+            <!-- Conteúdo será preenchido via JS -->
+        </div>
+    </div>
+
+    <script>
+        // DADOS DO SISTEMA
+        const adminData = {
+            produtos: JSON.parse(localStorage.getItem('produtos')) || [],
+            vendas: JSON.parse(localStorage.getItem('vendas')) || [],
+            usuarios: JSON.parse(localStorage.getItem('usuarios')) || [],
+            config: JSON.parse(localStorage.getItem('admin_config')) || {}
+        };
+
+        // INICIALIZAR PAINEL
+        function initializeAdmin() {
+            // Verificar se é admin
+            checkAdminAccess();
+            
+            // Carregar estatísticas
+            loadStatistics();
+            
+            // Carregar dados iniciais
+            loadRecentOrders();
+            loadPopularProducts();
+            
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Atualizar contadores
+            updateCounters();
+            
+            // Atualizar última atualização
+            updateLastUpdate();
+        }
+
+        // VERIFICAR ACESSO ADMIN
+        function checkAdminAccess() {
+            const user = JSON.parse(localStorage.getItem('current_user'));
+            if (!user || user.tipo !== 'admin') {
+                showNotification('Acesso restrito. Redirecionando...', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return;
+            }
+        }
+
+        // CARREGAR ESTATÍSTICAS
+        function loadStatistics() {
+            // Receita total
+            const totalRevenue = adminData.vendas.reduce((total, venda) => {
+                return total + (venda.total || 0);
+            }, 0);
+            document.getElementById('totalRevenue').textContent = `${totalRevenue.toFixed(2)} MT`;
+            
+            // Total de pedidos
+            document.getElementById('totalOrders').textContent = adminData.vendas.length;
+            
+            // Total de clientes (usuários únicos)
+            const uniqueCustomers = [...new Set(adminData.vendas.map(v => v.cliente?.email))].filter(Boolean).length;
+            document.getElementById('totalCustomers').textContent = uniqueCustomers;
+            
+            // Total de downloads
+            const totalDownloads = adminData.produtos.reduce((total, produto) => {
+                return total + (produto.downloads || 0);
+            }, 0);
+            document.getElementById('totalDownloads').textContent = totalDownloads.toLocaleString();
+        }
+
+        // CARREGAR PEDIDOS RECENTES
+        function loadRecentOrders() {
+            const table = document.querySelector('#recentOrdersTable tbody');
+            const recentOrders = adminData.vendas
+                .sort((a, b) => new Date(b.data) - new Date(a.data))
+                .slice(0, 5);
+            
+            table.innerHTML = recentOrders.map(order => `
+                <tr>
+                    <td>
+                        <strong>${order.id}</strong>
+                    </td>
+                    <td>
+                        <div>${order.cliente?.nome || 'Cliente'}</div>
+                        <div style="font-size: 0.8rem; color: #94a3b8;">${order.cliente?.email || ''}</div>
+                    </td>
+                    <td>${formatDate(order.data)}</td>
+                    <td><strong>${order.total?.toFixed(2) || '0'} MT</strong></td>
+                    <td>
+                        <span class="status-badge status-${order.status || 'pendente'}">
+                            ${getStatusText(order.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewOrder('${order.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn action-edit" onclick="editOrder('${order.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // CARREGAR PRODUTOS POPULARES
+        function loadPopularProducts() {
+            const table = document.querySelector('#popularProductsTable tbody');
+            const popularProducts = adminData.produtos
+                .sort((a, b) => (b.downloads || 0) - (a.downloads || 0))
+                .slice(0, 5);
+            
+            table.innerHTML = popularProducts.map(produto => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="font-size: 1.5rem;">${produto.capa || '📘'}</div>
+                            <div>
+                                <div><strong>${produto.titulo}</strong></div>
+                                <div style="font-size: 0.8rem; color: #94a3b8;">
+                                    ${produto.curso === 'enfermagem' ? 'Enfermagem' : 'ESMI'}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${produto.curso === 'enfermagem' ? 'Enfermagem Geral' : 'ESMI'}</td>
+                    <td><strong>${produto.preco_desconto || produto.preco} MT</strong></td>
+                    <td>${(produto.downloads || 0).toLocaleString()}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 5px; color: #fbbf24;">
+                            <i class="fas fa-star"></i>
+                            <span>${produto.avaliacao || 4.5}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewProduct('${produto.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn action-edit" onclick="editProduct('${produto.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn action-delete" onclick="deleteProduct('${produto.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // CARREGAR TODOS OS PRODUTOS
+        function loadAllProducts() {
+            const table = document.querySelector('#productsTable tbody');
+            const produtos = adminData.produtos;
+            
+            table.innerHTML = produtos.map(produto => `
+                <tr>
+                    <td>
+                        <div style="font-size: 1.5rem;">${produto.capa || '📘'}</div>
+                    </td>
+                    <td>
+                        <div><strong>${produto.titulo}</strong></div>
+                        <div style="font-size: 0.8rem; color: #94a3b8;">
+                            ${produto.descricao?.substring(0, 50)}...
+                        </div>
+                    </td>
+                    <td>${produto.curso === 'enfermagem' ? 'Enfermagem Geral' : 'ESMI'}</td>
+                    <td>${produto.ano}º Ano • Sem ${produto.semestre}</td>
+                    <td>
+                        ${produto.preco_desconto ? `
+                            <div><strong>${produto.preco_desconto} MT</strong></div>
+                            <div style="font-size: 0.8rem; color: #94a3b8; text-decoration: line-through;">
+                                ${produto.preco} MT
+                            </div>
+                        ` : `
+                            <strong>${produto.preco} MT</strong>
+                        `}
+                    </td>
+                    <td>${(produto.downloads || 0).toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge ${produto.publicado ? 'status-publicado' : 'status-rascunho'}">
+                            ${produto.publicado ? 'Publicado' : 'Rascunho'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewProduct('${produto.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn action-edit" onclick="editProduct('${produto.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn action-delete" onclick="deleteProduct('${produto.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // CARREGAR TODOS OS PEDIDOS
+        function loadAllOrders() {
+            const table = document.querySelector('#ordersTable tbody');
+            const vendas = adminData.vendas;
+            
+            table.innerHTML = vendas.map(venda => `
+                <tr>
+                    <td><strong>${venda.id}</strong></td>
+                    <td>
+                        <div>${venda.cliente?.nome || 'Cliente'}</div>
+                        <div style="font-size: 0.8rem; color: #94a3b8;">${venda.cliente?.email || ''}</div>
+                    </td>
+                    <td>${formatDate(venda.data)}</td>
+                    <td>
+                        <div style="font-size: 0.9rem;">
+                            ${venda.items?.length || 0} produto(s)
+                        </div>
+                    </td>
+                    <td><strong>${venda.total?.toFixed(2) || '0'} MT</strong></td>
+                    <td>
+                        <span class="status-badge status-${venda.status || 'pendente'}">
+                            ${getStatusText(venda.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn action-view" onclick="viewOrder('${venda.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn action-edit" onclick="editOrder('${venda.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // MOSTRAR SEÇÃO
+        function showSection(sectionId) {
+            // Esconder todas as seções
+            document.querySelectorAll('section[id$="Section"]').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Remover active de todos os itens do menu
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Mostrar seção selecionada
+            document.getElementById(`${sectionId}Section`).style.display = 'block';
+            
+            // Ativar item do menu correspondente
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+            
+            // Atualizar título da página
+            const titles = {
+                dashboard: 'Dashboard',
+                products: 'Produtos',
+                orders: 'Pedidos',
+                customers: 'Clientes',
+                settings: 'Configurações',
+                analytics: 'Analytics',
+                categories: 'Categorias',
+                courses: 'Cursos',
+                transactions: 'Transações',
+                users: 'Usuários'
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[sectionId] || 'Painel Admin';
+            
+            // Carregar dados específicos da seção
+            if (sectionId === 'products') {
+                loadAllProducts();
+            } else if (sectionId === 'orders') {
+                loadAllOrders();
+            }
+        }
+
+        // ABRIR MODAL DE PRODUTO
+        function openProductModal() {
+            document.getElementById('productModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.form-modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            document.body.style.overflow = 'auto';
+            resetProductForm();
+        }
+
+        // RESETAR FORMULÁRIO DE PRODUTO
+        function resetProductForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('contentItems').innerHTML = '';
+        }
+
+        // ADICIONAR ITEM DE CONTEÚDO
+        function addContentItem() {
+            const container = document.getElementById('contentItems');
+            const itemCount = container.children.length + 1;
+            
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'content-item-row';
+            itemDiv.style.cssText = `
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+                align-items: center;
+            `;
+            
+            itemDiv.innerHTML = `
+                <input type="text" class="form-input" 
+                       placeholder="Item ${itemCount} do conteúdo programático"
+                       style="flex: 1;">
+                <button type="button" class="action-btn action-delete" 
+                        onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(itemDiv);
+        }
+
+        // SALVAR PRODUTO
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Coletar dados do formulário
+            const productData = {
+                id: 'prod_' + Date.now().toString(36) + Math.random().toString(36).substr(2),
+                titulo: document.getElementById('productTitle').value,
+                curso: document.getElementById('productCourse').value,
+                ano: parseInt(document.getElementById('productYear').value),
+                semestre: parseInt(document.getElementById('productSemester').value),
+                descricao: document.getElementById('productShortDesc').value,
+                descricao_completa: document.getElementById('productFullDesc').value,
+                preco: parseFloat(document.getElementById('productPrice').value),
+                preco_desconto: document.getElementById('productDiscountPrice').value 
+                    ? parseFloat(document.getElementById('productDiscountPrice').value) 
+                    : null,
+                tags: document.getElementById('productTags').value.split(',').map(t => t.trim()),
+                video_url: document.getElementById('productVideoUrl').value || null,
+                downloads: 0,
+                avaliacao: 4.5,
+                capa: '📘', // Em produção, seria o nome do arquivo de imagem
+                publicado: document.querySelector('input[name="productStatus"]:checked').value === 'published',
+                data_cadastro: new Date().toISOString(),
+                conteudo: Array.from(document.querySelectorAll('#contentItems input')).map(input => input.value)
+            };
+            
+            // Adicionar ao banco de dados
+            adminData.produtos.push(productData);
+            localStorage.setItem('produtos', JSON.stringify(adminData.produtos));
+            
+            // Fechar modal e atualizar
+            closeModal();
+            updateCounters();
+            loadAllProducts();
+            
+            showNotification('Produto cadastrado com sucesso!', 'success');
+        });
+
+        // VER PRODUTO
+        function viewProduct(productId) {
+            const produto = adminData.produtos.find(p => p.id === productId);
+            if (produto) {
+                showNotification(`Visualizando: ${produto.titulo}`, 'info');
+                // Em produção, abriria uma modal com todos os detalhes
+            }
+        }
+
+        // EDITAR PRODUTO
+        function editProduct(productId) {
+            const produto = adminData.produtos.find(p => p.id === productId);
+            if (produto) {
+                // Preencher formulário com dados do produto
+                document.getElementById('productTitle').value = produto.titulo;
+                document.getElementById('productCourse').value = produto.curso;
+                document.getElementById('productYear').value = produto.ano;
+                document.getElementById('productSemester').value = produto.semestre;
+                document.getElementById('productPrice').value = produto.preco;
+                document.getElementById('productDiscountPrice').value = produto.preco_desconto || '';
+                document.getElementById('productShortDesc').value = produto.descricao;
+                document.getElementById('productFullDesc').value = produto.descricao_completa;
+                document.getElementById('productTags').value = produto.tags?.join(', ') || '';
+                document.getElementById('productVideoUrl').value = produto.video_url || '';
+                
+                // Status
+                document.querySelector(`input[name="productStatus"][value="${produto.publicado ? 'published' : 'draft'}"]`).checked = true;
+                
+                // Abrir modal
+                openProductModal();
+                
+                showNotification(`Editando: ${produto.titulo}`, 'info');
+            }
+        }
+
+        // EXCLUIR PRODUTO
+        function deleteProduct(productId) {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
+                adminData.produtos = adminData.produtos.filter(p => p.id !== productId);
+                localStorage.setItem('produtos', JSON.stringify(adminData.produtos));
+                loadAllProducts();
+                updateCounters();
+                showNotification('Produto excluído com sucesso!', 'success');
+            }
+        }
+
+        // VER PEDIDO
+        function viewOrder(orderId) {
+            const order = adminData.vendas.find(v => v.id === orderId);
+            if (order) {
+                const modal = document.getElementById('orderModal');
+                const container = modal.querySelector('.form-container');
+                
+                container.innerHTML = `
+                    <div class="form-header">
+                        <h2 class="form-title">
+                            <i class="fas fa-receipt"></i> Pedido ${order.id}
+                        </h2>
+                        <button class="close-btn" onclick="closeModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">
+                            <i class="fas fa-user"></i> Informações do Cliente
+                        </h3>
+                        <div style="background: rgba(15, 23, 42, 0.5); border-radius: var(--radius-small); padding: 20px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 0.9rem;">Nome</div>
+                                    <div style="font-weight: 600;">${order.cliente?.nome || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 0.9rem;">Email</div>
+                                    <div style="font-weight: 600;">${order.cliente?.email || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 0.9rem;">Telefone</div>
+                                    <div style="font-weight: 600;">${order.cliente?.telefone || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 0.9rem;">Data</div>
+                                    <div style="font-weight: 600;">${formatDate(order.data)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">
+                            <i class="fas fa-shopping-cart"></i> Itens do Pedido
+                        </h3>
+                        <div style="background: rgba(15, 23, 42, 0.5); border-radius: var(--radius-small); padding: 20px;">
+                            ${order.items?.map(item => `
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                                    <div>
+                                        <div style="font-weight: 600;">${getProductName(item.id)}</div>
+                                        <div style="font-size: 0.9rem; color: #94a3b8;">
+                                            Quantidade: ${item.quantidade}
+                                        </div>
+                                    </div>
+                                    <div style="font-weight: 600; color: var(--secondary);">
+                                        ${getProductPrice(item.id) * item.quantidade} MT
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">
+                            <i class="fas fa-credit-card"></i> Pagamento
+                        </h3>
+                        <div style="background: rgba(15, 23, 42, 0.5); border-radius: var(--radius-small); padding: 20px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 0.9rem;">Método</div>
+                                    <div style="font-weight: 600;">${order.metodo || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 0.9rem;">Status</div>
+                                    <span class="status-badge status-${order.status || 'pendente'}">
+                                        ${getStatusText(order.status)}
+                                    </span>
+                                </div>
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 0.9rem;">Total</div>
+                                    <div style="font-weight: 600; color: var(--secondary); font-size: 1.2rem;">
+                                        ${order.total?.toFixed(2) || '0'} MT
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 0.9rem;">Código Download</div>
+                                    <div style="font-weight: 600; font-family: monospace;">${order.codigoDownload || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn-outline" onclick="closeModal()">
+                            <i class="fas fa-times"></i> Fechar
+                        </button>
+                        <button class="btn-primary" onclick="printOrder('${order.id}')">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
+                    </div>
+                `;
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // EDITAR PEDIDO
+        function editOrder(orderId) {
+            const order = adminData.vendas.find(v => v.id === orderId);
+            if (order) {
+                const newStatus = prompt('Alterar status do pedido:', order.status);
+                if (newStatus && ['pago', 'pendente', 'cancelado'].includes(newStatus)) {
+                    order.status = newStatus;
+                    localStorage.setItem('vendas', JSON.stringify(adminData.vendas));
+                    loadRecentOrders();
+                    loadAllOrders();
+                    showNotification('Status do pedido atualizado!', 'success');
+                }
+            }
+        }
+
+        // FUNÇÕES UTILITÁRIAS
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                pago: 'Pago',
+                pendente: 'Pendente',
+                cancelado: 'Cancelado'
+            };
+            return statusMap[status] || 'Pendente';
+        }
+
+        function getProductName(productId) {
+            const produto = adminData.produtos.find(p => p.id === productId);
+            return produto?.titulo || 'Produto não encontrado';
+        }
+
+        function getProductPrice(productId) {
+            const produto = adminData.produtos.find(p => p.id === productId);
+            return produto?.preco_desconto || produto?.preco || 0;
+        }
+
+        function updateCounters() {
+            document.getElementById('productsCount').textContent = adminData.produtos.length;
+            document.getElementById('ordersCount').textContent = adminData.vendas.length;
+            document.getElementById('customersCount').textContent = 
+                [...new Set(adminData.vendas.map(v => v.cliente?.email))].filter(Boolean).length;
+        }
+
+        function updateLastUpdate() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = 
+                now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function refreshData() {
+            adminData.produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+            adminData.vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+            
+            loadStatistics();
+            loadRecentOrders();
+            loadPopularProducts();
+            updateCounters();
+            updateLastUpdate();
+            
+            showNotification('Dados atualizados com sucesso!', 'success');
+        }
+
+        function logout() {
+            if (confirm('Deseja sair do painel administrativo?')) {
+                localStorage.removeItem('current_user');
+                window.location.href = 'index.html';
+            }
+        }
+
+        function printOrder(orderId) {
+            // Em produção, implementaria geração de PDF
+            showNotification('Funcionalidade de impressão em desenvolvimento', 'info');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 30px;
+                right: 30px;
+                background: ${type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : type === 'error' ? '#ef4444' : '#6366f1'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: var(--radius-small);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 9999;
+                animation: slideIn 0.3s ease-out;
+                box-shadow: var(--shadow);
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // CONFIGURAR EVENT LISTENERS
+        function setupEventListeners() {
+            // Navegação do menu
+            document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+                item.addEventListener('click', () => {
+                    showSection(item.dataset.section);
+                });
+            });
+            
+            // Botões principais
+            document.getElementById('refreshBtn').addEventListener('click', refreshData);
+            document.getElementById('addProductBtn').addEventListener('click', openProductModal);
+            document.getElementById('addNewProductBtn').addEventListener('click', openProductModal);
+            
+            // Filtros
+            document.getElementById('productSearch').addEventListener('input', function() {
+                // Implementar busca em tempo real
+            });
+            
+            // Atualizar a cada 30 segundos
+            setInterval(refreshData, 30000);
+        }
+
+        // INICIALIZAR
+        document.addEventListener('DOMContentLoaded', initializeAdmin);
+    </script>
+</body>
+</html>
